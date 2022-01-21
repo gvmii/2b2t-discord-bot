@@ -16,20 +16,6 @@ client = discord.Client(prefix='!')
 
 load_dotenv()
 
-# Pretty crazy stuff how there's literally a module for this and more.
-
-# def logging.DEBUG(message_to_format):
-#     unix_timestamp = datetime.now().timestamp()
-#     converted_timestamp = datetime.fromtimestamp(int(unix_timestamp))
-#     print(f"[{converted_timestamp.strftime('%d-%m-%y %H:%M:%S')}] {message_to_format}")
-
-# def logError(message_to_format, doExit):
-#     init() #Initialize colorama
-#     sys.stderr.write(f"{Fore.RED}An error ocurred with message: {message_to_format}{Style.RESET_ALL}")
-#     if doExit:
-#         sys.exit(1)
-
-#TODO: Add presence for the bot
 
 # Set the logging format and level. I am mad I didn't use the logging module before (or in this case, qlogging, for cool colors ;3).
 logger = qlogging.get_logger(format_str='[%(asctime)s] [%(levelname)s] > %(message)s', level='info', loggingmode="manual", colors=
@@ -40,8 +26,6 @@ logger = qlogging.get_logger(format_str='[%(asctime)s] [%(levelname)s] > %(messa
                             'ERROR': Fore.RED + Style.BRIGHT,
                             'CRITICAL': Fore.RED + Back.WHITE + Style.BRIGHT,
                         }, format_date='%Y-%m-%d %H:%M:%S')
-
-
 
 
 def readConfig():
@@ -67,6 +51,10 @@ def first_startup():
 # On ready, do this.
 @client.event
 async def on_ready():
+    
+    #Set the bot's activity and presence
+    await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game(name='https://github.com/Ixogamer'))
+
     config = readConfig()
     
     if not config['channel_id']:
@@ -89,7 +77,6 @@ async def on_ready():
     embed = discord.Embed(title='Command List:', description='!prioq \n !start', color=0x5300eb).set_footer(text='Remember that you can always invoke the command list using !help')
     await message.edit(embed=embed, delete_after=5)
     logger.info(f'Message edited to: {message.id}')
-
 
 
 @client.event
