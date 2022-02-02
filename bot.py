@@ -81,6 +81,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     await ctx.send(f"An error occured: {str(error)}")
+    logger.error(error)
 
 @bot.command()
 async def prioq(ctx):
@@ -106,10 +107,10 @@ async def start(ctx):
 
 @bot.command()
 async def coords(ctx, coordx: float, coordz: float):    
-    overworld_coords_x = coordx * 8
-    overworld_coords_z = coordz * 8
-    nether_coords_x = coordx / 8
-    nether_coords_z = coordz / 8
+    overworld_coords_x = int(coordx * 8)
+    overworld_coords_z = int(coordz * 8)
+    nether_coords_x = int(coordx // 8)
+    nether_coords_z = int(coordz // 8)
     embed=nextcord.Embed(title='Coordinates conversion result:')
     embed.set_author(name='Sponsored by Ccorp', url='https://discord.gg/ccorp')
     embed.add_field(name='Nether to Overworld:', value=f'**X:** {overworld_coords_x} | **Z:** {overworld_coords_z}', inline=False)
