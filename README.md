@@ -17,4 +17,17 @@ $ pip install -r requirements.txt
 $ python ./bot.py
 ```
 
-Made with [Pycord](https://github.com/Pycord-Development/pycord)
+## Credits
+
+Made with [Nextcord](https://github.com/nextcord/nextcord/)
+
+### API's
+
+[2bqueue.info](https://2bqueue.info/) from [Tycrek](https://tycrek.com/)
+[2b2t.dev](https://api.2b2t.dev/)
+
+### TODO
+
+[X] Coordinate conversion
+[] ETA (with x bps, you'll reach y coords in z minutes)
+[] Taxi Blacklist (Add, remove, view)
