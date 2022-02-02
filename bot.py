@@ -23,6 +23,16 @@ logger = qlogging.get_logger(format_str='[%(asctime)s] [%(levelname)s] > %(messa
     'CRITICAL': Fore.RED + Back.WHITE + Style.BRIGHT,
 }, format_date='%Y-%m-%d %H:%M:%S')
 
+class CloseButton(nextcord.ui.View):
+    def __init__(self, message: nextcord.Message):
+        super().__init__()
+        self.message = message
+
+    @nextcord.ui.button(label="🗑️", style=nextcord.ButtonStyle.red)
+    async def close_button(
+        self, button: nextcord.Button, interaction: nextcord.Interaction
+    ):
+        await self.message.delete()
 
 def readConfig():
     with open('config.json', 'r') as jsonfile:
@@ -80,7 +90,9 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.send(f"An error occured: {str(error)}")
+    message_to_send = await ctx.send(f"An error occured: {str(error)}")
+    await message_to_send.edit(view=CloseButton(message_to_send))
+
     logger.error(error)
 
 @bot.command()
@@ -90,7 +102,8 @@ async def prioq(ctx):
     clean_embed = nextcord.Embed(title='Scale of unplayability (0 - 100)',
                                     description=f'Normal:{stats["regular"]}\nPrio: {stats["prio"]}', 
                                     color=0xff00bf).set_footer(text=f'Estimated queue time: {estimatedtime}')
-    await ctx.send(embed=clean_embed)
+    message_to_send = await ctx.send(embed=clean_embed)
+    await message_to_send.edit(view=CloseButton(message_to_send))
     logger.info(f'{ctx.author} ran !prioq, sent embed.')
 
 @bot.command()
@@ -100,13 +113,14 @@ async def pingme(ctx):
         users_to_ping.append(ctx.author.id)
         await ctx.channel.send(f'{ctx.author.mention}. Your name has been added to the list, you will be pinged.')
 
+
 @bot.command()
 async def start(ctx):
     repeat_command.start(ctx)
     logger.info('Starting 10 minute countdown.')
 
 @bot.command()
-async def coords(ctx, coordx: float, coordz: float):    
+async def coords(ctx, coordx: float, coordz: float):
     overworld_coords_x = int(coordx * 8)
     overworld_coords_z = int(coordz * 8)
     nether_coords_x = int(coordx // 8)
@@ -116,10 +130,31 @@ async def coords(ctx, coordx: float, coordz: float):
     embed.add_field(name='Nether to Overworld:', value=f'**X:** {overworld_coords_x} | **Z:** {overworld_coords_z}', inline=False)
     embed.add_field(name='Overworld to Nether:', value=f'**X:** {nether_coords_x} | **Z:** {nether_coords_z}', inline=False)
     embed.set_footer(text='Made by GUMI#0727')
-    await ctx.send(embed=embed)
+    message_to_send = await ctx.send(embed=embed)
+    await message_to_send.edit(view=CloseButton(message_to_send))
 
+    logger.info(f'Ran command coords with values: {coordx}, {coordz}')
 
-
+@bot.command()
+async def eta(ctx, blocks: int = 0, bps: float = 18.0):
+    if blocks == 0:
+        message_to_send = await ctx.send('Usage: !eta [Blocks to travel] [Blocks per second] \n Example: `!eta 5000 18`. \n If the blocks per second isnt set, it will use the value 18.')
+        await message_to_send.edit(view=CloseButton(message_to_send))
+        return
+    seconds = blocks / bps
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    result = "%d:%02d:%02d" % (hour, minutes, seconds)
+    embed=nextcord.Embed(title='Estimated time of arrival:')
+    embed.set_author(name='Sponsored by Ccorp', url='https://discord.gg/ccorp')
+    embed.add_field(name=f'Result at {bps} blocks per second:', value= f'{result} \n\n*(Hours:Minutes:Seconds)*', inline=False)
+    embed.set_footer(text='Made by GUMI#0727')
+    message_to_send = await ctx.send(embed=embed)
+    await message_to_send.edit(view=CloseButton(message_to_send))
+    logger.info(f'Command eta was called with values: {blocks}, {bps}')
 
 @tasks.loop(minutes=10)
 async def repeat_command(ctx):
