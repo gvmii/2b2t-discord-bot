@@ -90,8 +90,8 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
-    message_to_send = await ctx.send(f"An error occured: {str(error)}")
-    await message_to_send.edit(view=CloseButton(message_to_send))
+    # message_to_send = await ctx.send(f"An error occured: {str(error)}")
+    # await message_to_send.edit(view=CloseButton(message_to_send))
 
     logger.error(error)
 
