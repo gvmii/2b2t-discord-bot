@@ -4,6 +4,10 @@
 
 - !prioq -> Checks the priority queue length and sends it.
 - !start -> Starts a loop that sends the status of the queue every 10 minutes. If it's equal to last one, it will not send anything, and instead log it in console.
+- !banned [USERNAME] -> Checks if an user is banned in 2b2t.
+- !muted [USERNAME] -> Checks if an user is muted in 2b2t.
+- !eta [BLOCKS] [BPS] -> Calculates how long you would take to travel x blocks in y bps
+- !coords [X COORD] [Z COORD] -> Converts Overworld coordinates to Netherrack and viceversa
 
 ## Install guide
 
@@ -25,9 +29,8 @@ Made with [Nextcord](https://github.com/nextcord/nextcord/)
 
 [2bqueue.info](https://2bqueue.info/) from [Tycrek](https://tycrek.com/)
 [2b2t.dev](https://api.2b2t.dev/)
+[cokesniffer.org](https://api.cokesniffer.org)
 
 ### TODO
 
-[X] Coordinate conversion
-[] ETA (with x bps, you'll reach y coords in z minutes)
-[] Taxi Blacklist (Add, remove, view)
+Feel free to ask for a module GUMI#0727
