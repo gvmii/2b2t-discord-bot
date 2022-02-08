@@ -29,9 +29,11 @@ Made with [Nextcord](https://github.com/nextcord/nextcord/)
 
 ### API's
 
-[2bqueue.info](https://2bqueue.info/) from [Tycrek](https://tycrek.com/)
-[2b2t.dev](https://api.2b2t.dev/)
-[cokesniffer.org](https://api.cokesniffer.org) for bans and mute info.
+- **[2bqueue.info](https://2bqueue.info/)** from [Tycrek](https://tycrek.com/)
+
+- **[2b2t.dev](https://api.2b2t.dev/)**
+
+- **[cokesniffer.org](https://api.cokesniffer.org)** for bans and mute info.
 
 ### TODO
 
