@@ -118,7 +118,7 @@ async def on_command_error(ctx, error):
 
 
 @bot.command()
-async def prioq(ctx):
+async def queue(ctx):
     stats = requests.get("https://2bqueue.info/*").json()
     estimatedtime = requests.get("https://api.2b2t.dev/prioq").json()[2]
     clean_embed = nextcord.Embed(
@@ -128,17 +128,17 @@ async def prioq(ctx):
     ).set_footer(text=f"Estimated queue time: {estimatedtime}")
     message_to_send = await ctx.send(embed=clean_embed)
     await message_to_send.edit(view=CloseButton(message_to_send))
-    logger.info("%s ran !prioq, sent embed.", ctx.author)
+    logger.info("%s ran !queue, sent embed.", ctx.author)
 
 
-@bot.command()
-async def pingme(ctx):
-    users_to_ping = []
-    if ctx.content.startswith("!pingme"):
-        users_to_ping.append(ctx.author.id)
-        await ctx.channel.send(
-            f"{ctx.author.mention}. Your name has been added to the list, you will be pinged."
-        )
+# @bot.command()
+# async def pingme(ctx):
+#     users_to_ping = []
+#     if ctx.content.startswith("!pingme"):
+#         users_to_ping.append(ctx.author.id)
+#         await ctx.channel.send(
+#             f"{ctx.author.mention}. Your name has been added to the list, you will be pinged."
+#         )
 
 
 @bot.command()
