@@ -1,12 +1,22 @@
-import asyncio, json, os, sys, nextcord, aiohttp, aiofiles
+import asyncio
+import json
+import os
+import sys
+import nextcord
+import aiohttp
+import aiofiles
 from rich import print, console
 from dotenv import load_dotenv
 from nextcord.ext import commands, tasks
 
-olderStats = {}
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(
+    command_prefix="!",
+    status=nextcord.Status.do_not_disturb,
+    activity=nextcord.Game(name="https://github.com/Ixogamer"),
+)
 console = console.Console()
 load_dotenv()
+
 
 class CloseButton(nextcord.ui.View):
     def __init__(self, message: nextcord.Message):
@@ -21,7 +31,7 @@ class CloseButton(nextcord.ui.View):
 
 
 async def readConfig():
-    async with open("config.json", "r", encoding="utf8") as jsonfile:
+    async with aiofiles.open("config.json", "r", encoding="utf8") as jsonfile:
         config = json.loads(await jsonfile.read())
         console.log("Config loaded [green]successfully[/green].")
         return config
@@ -31,20 +41,17 @@ async def readConfig():
 
 
 async def first_startup():
-    await bot.change_presence(
-        status=nextcord.Status.do_not_disturb,
-        activity=nextcord.Game(name="https://github.com/Ixogamer"),
-    )
     config = await readConfig()
     console.log("Starting...")
+
     print("Please, send here the Channel ID for the updating message.")
     channel_id = input()
-    user_ids = {"userids": []}
+    # user_ids = {"userids": []}
     # Set the Channel Id to the config file
     config["channel_id"] = channel_id
-    config["user_ids"] = user_ids
-    async with open("config.json", "w", encoding="utf8") as jsonfile:
-        jsonfile.write(json.dumps(config))
+    # config["user_ids"] = user_ids
+    async with aiofiles.open("config.json", "w", encoding="utf8") as jsonfile:
+        await jsonfile.write(json.dumps(config))
 
 
 # On ready, do this.
@@ -78,7 +85,6 @@ async def on_ready():
         text="Remember that you can always invoke the command list using !help"
     )
     await message.edit(embed=embed, delete_after=5)
-    logger.info("Message edited to: %s", message.id)
 
 
 @bot.event
@@ -93,7 +99,7 @@ async def queue(ctx):
             stats = await response.json()
         async with session.get("https://api.2b2t.dev/prioq") as response:
             estimatedtime = await response.json()
-            estimatedtime = estimatedtime[2] 
+            estimatedtime = estimatedtime[2]
     clean_embed = nextcord.Embed(
         title="Scale of unplayability (0 - 100)",
         description=f'Normal:{stats["regular"]}\nPrio: {stats["prio"]}',
@@ -106,7 +112,6 @@ async def queue(ctx):
 @bot.command()
 async def start(ctx):
     repeat_command.start(ctx)
-    logger.info("Starting 10 minute countdown.")
 
 
 @bot.command()
@@ -162,22 +167,24 @@ async def eta(ctx, blocks: int = 0, bps: float = 18.0):
 @bot.command()
 async def banned(ctx, username):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://api.cokesniffer.org/bans/?username={username}") as response:
+        async with session.get(
+            f"http://api.cokesniffer.org:8080/bans?username={username}"
+        ) as response:
             code = response.status
             data = await response.json()
     if code == 200:
         clean_embed = nextcord.Embed(
             title="Banned list information:",
             description=f'User **{username}** is banned for rules: {data["rules"]}',
-            color=0xFF00BF,
+            color=0x194D33,
         )
         message_to_send = await ctx.send(embed=clean_embed)
         await message_to_send.edit(view=CloseButton(message_to_send))
     else:
         clean_embed = nextcord.Embed(
             title="Banned list information:",
-            description=f"User **{username}** is not banned.",
-            color=0xFF00BF,
+            description=f"User **{username}** is not banned, or there's an API error.",
+            color=0xB80000,
         )
         message_to_send = await ctx.send(embed=clean_embed)
         await message_to_send.edit(view=CloseButton(message_to_send))
@@ -186,26 +193,27 @@ async def banned(ctx, username):
 @bot.command()
 async def muted(ctx, username):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://api.cokesniffer.org/mutes/?username={username}") as response:
+        async with session.get(
+            f"http://api.cokesniffer.org:8080/mutes?username={username}"
+        ) as response:
             code = response.status
             data = await response.json()
     if code == 200:
         clean_embed = nextcord.Embed(
             title="Mute list information:",
             description=f'User **{username}** is **{data["type"]}** muted for rules: **{data["rules"]}**',
-            color=0xFF00BF,
+            color=0x194D33,
         )
         message_to_send = await ctx.send(embed=clean_embed)
         await message_to_send.edit(view=CloseButton(message_to_send))
     else:
         clean_embed = nextcord.Embed(
             title="Mute list information:",
-            description=f"User **{username}** is not muted.",
-            color=0xFF00BF,
+            description=f"User **{username}** is not muted, or there's an API Error.",
+            color=0xB80000,
         )
         message_to_send = await ctx.send(embed=clean_embed)
         await message_to_send.edit(view=CloseButton(message_to_send))
-
 
 
 @tasks.loop(minutes=10)
@@ -217,7 +225,7 @@ async def repeat_command(ctx):
             stats = await response.json()
         async with session.get("https://api.2b2t.dev/prioq") as response:
             estimatedtime = await response.json()
-            estimatedtime = estimatedtime[2] 
+            estimatedtime = estimatedtime[2]
 
     if stats == old_stats:
         console.log("[yellow]No change in stats[/yellow], skipping.")
