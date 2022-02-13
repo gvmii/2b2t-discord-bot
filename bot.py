@@ -14,6 +14,8 @@ bot = commands.Bot(command_prefix="!")
 
 load_dotenv()
 
+# TODO: Change ALL commands to Slash commands
+
 
 # Set the logging format and level. I am mad I didn't use the logging module before (or in this case, qlogging, for cool colors ;3).
 logger = qlogging.get_logger(
@@ -41,6 +43,57 @@ class CloseButton(nextcord.ui.View):
         self, button: nextcord.Button, interaction: nextcord.Interaction
     ):
         await self.message.delete()
+
+
+class Dropdown(nextcord.ui.Select):
+    def __init__(self):
+        options = [
+            nextcord.SelectOption(
+                label="Red", description="Your favourite colour is red", emoji="🟥"
+            ),
+            nextcord.SelectOption(
+                label="Green", description="Your favourite colour is green", emoji="🟩"
+            ),
+            nextcord.SelectOption(
+                label="Blue", description="Your favourite colour is blue", emoji="🟦"
+            ),
+        ]
+        super().__init__(
+            placeholder="Choose your favourite colour...",
+            min_values=1,
+            max_values=1,
+            options=options,
+        )
+
+    async def callback(self, interaction: nextcord.Interaction):
+        if self.values[0] == "Red":
+            message_to_send = await interaction.response.send_message(
+                "amogus", ephemeral=True
+            )
+            print("fdsfsd")
+        else:
+            await interaction.response.send_message(
+                f"Your favourite colour is {self.values[0]}"
+            )
+
+
+class DropdownView(nextcord.ui.View):
+    def __init__(self):
+        super().__init__()
+
+        # Adds the dropdown to our view object.
+        self.add_item(Dropdown())
+
+
+@bot.command()
+async def colour(ctx):
+    """Test command"""
+
+    # Create the view containing our dropdown
+    view = DropdownView()
+
+    # Sending a message containing our view
+    await ctx.send("Pick your favourite colour:", view=view)
 
 
 def readConfig():
@@ -119,6 +172,7 @@ async def on_command_error(ctx, error):
 
 @bot.command()
 async def queue(ctx):
+    """Sends information about 2b2t's queue"""
     stats = requests.get("https://2bqueue.info/*").json()
     estimatedtime = requests.get("https://api.2b2t.dev/prioq").json()[2]
     clean_embed = nextcord.Embed(
@@ -143,12 +197,14 @@ async def queue(ctx):
 
 @bot.command()
 async def start(ctx):
+    """Test command"""
     repeat_command.start(ctx)
     logger.info("Starting 10 minute countdown.")
 
 
 @bot.command()
 async def coords(ctx, coordx: float, coordz: float):
+    """Converts OW cords to Nether and viceversa"""
     overworld_coords_x = int(coordx * 8)
     overworld_coords_z = int(coordz * 8)
     nether_coords_x = int(coordx // 8)
@@ -174,6 +230,7 @@ async def coords(ctx, coordx: float, coordz: float):
 
 @bot.command()
 async def eta(ctx, blocks: int = 0, bps: float = 18.0):
+    """Gets the Estimated Time of Arrival with x blocks for y bps"""
     if blocks == 0:
         message_to_send = await ctx.send(
             "Usage: !eta [Blocks to travel] [Blocks per second] \n Example: `!eta 5000 18`. \n If the blocks per second isnt set, it will use the value 18."
@@ -202,6 +259,7 @@ async def eta(ctx, blocks: int = 0, bps: float = 18.0):
 
 @bot.command()
 async def banned(ctx, username):
+    """Checks if an user is banned from 2b2t"""
     r = requests.get(f"https://api.cokesniffer.org/bans/?username={username}")
     if r.status_code == 200:
         clean_embed = nextcord.Embed(
@@ -225,6 +283,7 @@ async def banned(ctx, username):
 
 @bot.command()
 async def muted(ctx, username):
+    """Checks if an user is muted from 2b2t"""
     r = requests.get(f"https://api.cokesniffer.org/mutes/?username={username}")
     if r.status_code == 200:
         clean_embed = nextcord.Embed(
