@@ -165,55 +165,59 @@ async def eta(ctx, blocks: int = 0, bps: float = 18.0):
 
 
 @bot.command()
-async def banned(ctx, username):
+async def user(ctx, username):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"https://api.mojang.com/users/profiles/minecraft/{username}"
+        ) as response:
+            data = await response.json()
+            uuid = data["id"]
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"http://api.cokesniffer.org:8080/mutes?username={username}"
+        ) as response:
+            # I have to do this because the API is scuffed and returns plain text.
+            # FIXME: Fix this if the API is fixed.
+            code = response.status
+            data = await response.read()
+            loaded_data = json.loads(data)
+    if code == 200:
+        is_muted = True
+        mute_type = loaded_data["type"]
+        mute_rules = loaded_data["rules"]
+    else:
+        is_muted = False
+
     async with aiohttp.ClientSession() as session:
         async with session.get(
             f"http://api.cokesniffer.org:8080/bans?username={username}"
         ) as response:
             code = response.status
-            data = await response.json()
+            data = await response.read()
+            loaded_data = json.loads(data)
     if code == 200:
-        clean_embed = nextcord.Embed(
-            title="Banned list information:",
-            description=f'User **{username}** is banned for rules: {data["rules"]}',
-            color=0x194D33,
-        )
-        message_to_send = await ctx.send(embed=clean_embed)
-        await message_to_send.edit(view=CloseButton(message_to_send))
+        is_banned = True
+        ban_rules = loaded_data["rules"]
     else:
-        clean_embed = nextcord.Embed(
-            title="Banned list information:",
-            description=f"User **{username}** is not banned, or there's an API error.",
-            color=0xB80000,
-        )
-        message_to_send = await ctx.send(embed=clean_embed)
-        await message_to_send.edit(view=CloseButton(message_to_send))
+        is_banned = False
 
-
-@bot.command()
-async def muted(ctx, username):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"http://api.cokesniffer.org:8080/mutes?username={username}"
-        ) as response:
-            code = response.status
-            data = await response.json()
-    if code == 200:
-        clean_embed = nextcord.Embed(
-            title="Mute list information:",
-            description=f'User **{username}** is **{data["type"]}** muted for rules: **{data["rules"]}**',
-            color=0x194D33,
-        )
-        message_to_send = await ctx.send(embed=clean_embed)
-        await message_to_send.edit(view=CloseButton(message_to_send))
-    else:
-        clean_embed = nextcord.Embed(
-            title="Mute list information:",
-            description=f"User **{username}** is not muted, or there's an API Error.",
-            color=0xB80000,
-        )
-        message_to_send = await ctx.send(embed=clean_embed)
-        await message_to_send.edit(view=CloseButton(message_to_send))
+    clean_embed = nextcord.Embed(
+        title=f"Results for lookup of player {username}: ", color=0x008B02
+    )
+    clean_embed.set_thumbnail(url=f"https://crafatar.com/avatars/{uuid}?size=64.png")
+    clean_embed.add_field(
+        name="Banned:",
+        value=f"**{is_banned}**, for rule(s) **{ban_rules}**",
+        inline=True,
+    )
+    clean_embed.add_field(
+        name="Muted:",
+        value=f"**{is_muted}**, of type **{mute_type}**, for rules **{mute_rules}**",
+        inline=True,
+    )
+    message_to_send = await ctx.send(embed=clean_embed)
+    await message_to_send.edit(view=CloseButton(message_to_send))
 
 
 @tasks.loop(minutes=10)
