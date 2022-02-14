@@ -132,7 +132,7 @@ async def coords(ctx, coordx: float, coordz: float):
         value=f"**X:** {nether_coords_x} | **Z:** {nether_coords_z}",
         inline=False,
     )
-    embed.set_footer(text="Made by GUMI#0727")
+    embed.set_footer(text="Made by GUMI#1337")
     message_to_send = await ctx.send(embed=embed)
     await message_to_send.edit(view=CloseButton(message_to_send))
 
@@ -159,7 +159,7 @@ async def eta(ctx, blocks: int = 0, bps: float = 18.0):
         value=f"{result} \n\n*(Hours:Minutes:Seconds)*",
         inline=False,
     )
-    embed.set_footer(text="Made by GUMI#0727")
+    embed.set_footer(text="Made by GUMI#1337")
     message_to_send = await ctx.send(embed=embed)
     await message_to_send.edit(view=CloseButton(message_to_send))
 
@@ -181,13 +181,15 @@ async def user(ctx, username):
             # FIXME: Fix this if the API is fixed.
             code = response.status
             data = await response.read()
-            loaded_data = json.loads(data)
-    if code == 200:
-        is_muted = True
-        mute_type = loaded_data["type"]
-        mute_rules = loaded_data["rules"]
-    else:
-        is_muted = False
+            if data == b"Username Not Found":
+                is_muted = False
+                mute_type = None
+                mute_rules = None
+            else:
+                loaded_data = json.loads(data)
+                is_muted = True
+                mute_type = loaded_data["type"]
+                mute_rules = loaded_data["rules"]
 
     async with aiohttp.ClientSession() as session:
         async with session.get(
@@ -195,13 +197,15 @@ async def user(ctx, username):
         ) as response:
             code = response.status
             data = await response.read()
-            loaded_data = json.loads(data)
-    if code == 200:
-        is_banned = True
-        ban_rules = loaded_data["rules"]
-    else:
-        is_banned = False
+            if data == b"Username Not Found":
+                is_banned = False
+                ban_rules = None
+            else:
+                loaded_data = json.loads(data)
+                is_banned = True
+                ban_rules = loaded_data["rules"]
 
+    # TODO: MAKE THIS BETTER
     clean_embed = nextcord.Embed(
         title=f"Results for lookup of player {username}: ", color=0x008B02
     )
@@ -216,6 +220,9 @@ async def user(ctx, username):
         value=f"**{is_muted}**, of type **{mute_type}**, for rules **{mute_rules}**",
         inline=True,
     )
+    clean_embed.add_field(name="UUID:", value=f"**{uuid}**", inline=False)
+    clean_embed.set_image(url=f"https://crafatar.com/renders/body/{uuid}?scale=4")
+    clean_embed.set_footer(text="Made by GUMI#1337")
     message_to_send = await ctx.send(embed=clean_embed)
     await message_to_send.edit(view=CloseButton(message_to_send))
 
