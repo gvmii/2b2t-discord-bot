@@ -1,13 +1,18 @@
-# 2b2t Priority queue discord bot announcer
+# 2b2t utility Discord bot
 
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+
+Missing something? Feel free to ask for a module GUMI#0727
+
+This repository is mostly a learning experience for me, so please, if you see something wrong, open a pull request.
+
+---
 
 ## Commands
 
 - !queue -> Checks the queue length and sends it.
 - !start -> Starts a loop that sends the status of the queue every 10 minutes. If it's equal to last one, it will not send anything, and instead log it in console.
-- !banned [USERNAME] -> Checks if an user is banned in 2b2t.
-- !muted [USERNAME] -> Checks if an user is muted in 2b2t.
+- !user [USER] -> Checks mute/ban status on 2b2t, sends skin info, will do more things.
 - !eta [BLOCKS] [BPS] -> Calculates how long you would take to travel x blocks in y bps
 - !coords [X COORD] [Z COORD] -> Converts Overworld coordinates to Netherrack and viceversa
 
@@ -19,8 +24,8 @@ Make sure to have at least [Python 3.10](https://www.python.org/downloads/) inst
 2. Run the following commands in a terminal in the same directory:
 
 ```bash
-$ pip install -r requirements.txt
-$ python ./bot.py
+pip install -r requirements.txt
+python ./bot.py
 ```
 
 ## Credits
@@ -35,6 +40,10 @@ Made with [Nextcord](https://github.com/nextcord/nextcord/)
 
 - **[cokesniffer.org](https://api.cokesniffer.org)** for bans and mute info.
 
+- **[crafatar.com](https://crafatar.com/)** for skin info
+
+- **[Mojang API](https://mojang-api-docs.netlify.app/)** for UUID conversion. 
+
 ### TODO
 
-Feel free to ask for a module GUMI#0727
+- Add utlity Cogs
