@@ -2,7 +2,7 @@
 
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
 
-Missing something? Feel free to ask for a module GUMI#0727
+Missing something? Feel free to ask for a module GUMI#1337
 
 This repository is mostly a learning experience for me, so please, if you see something wrong, open a pull request.
 
@@ -42,7 +42,7 @@ Made with [Nextcord](https://github.com/nextcord/nextcord/)
 
 - **[crafatar.com](https://crafatar.com/)** for skin info
 
-- **[Mojang API](https://mojang-api-docs.netlify.app/)** for UUID conversion. 
+- **[Mojang API](https://mojang-api-docs.netlify.app/)** for UUID conversion.
 
 ### TODO
 
