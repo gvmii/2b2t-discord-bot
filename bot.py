@@ -9,8 +9,11 @@ from rich import print, console
 from dotenv import load_dotenv
 from nextcord.ext import commands, tasks
 
+intents = nextcord.Intents.default()
+intents.message_content = True
+
 bot = commands.Bot(
-    command_prefix="!",
+    command_prefix="!", intents=intents, 
     status=nextcord.Status.do_not_disturb,
     activity=nextcord.Game(name="https://github.com/Ixogamer"),
 )
