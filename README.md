@@ -12,9 +12,9 @@ This repository is mostly a learning experience for me, so please, if you see so
 
 - !queue -> Checks the queue length and sends it.
 - !start -> Starts a loop that sends the status of the queue every 10 minutes. If it's equal to last one, it will not send anything, and instead log it in console.
-- !user [USER] -> Checks mute/ban status on 2b2t, sends skin info, will do more things.
+- !user [USER] -> Checks mute/ban status [NOT WORKING, API DELETED] on 2b2t, sends skin info, will do more things.
 - !eta [BLOCKS] [BPS] -> Calculates how long you would take to travel x blocks in y bps
-- !coords [X COORD] [Z COORD] -> Converts Overworld coordinates to Netherrack and viceversa
+- !coords [X COORD] [Z COORD] -> Converts Overworld coordinates to Nether and viceversa
 
 ## Install guide
 Make sure to have at least [Python 3.10](https://www.python.org/downloads/) installed.
