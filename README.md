@@ -17,15 +17,19 @@ This repository is mostly a learning experience for me, so please, if you see so
 - !coords [X COORD] [Z COORD] -> Converts Overworld coordinates to Netherrack and viceversa
 
 ## Install guide
-
 Make sure to have at least [Python 3.10](https://www.python.org/downloads/) installed.
-
-1. Open `.env` and add your bot token.
-2. Run the following commands in a terminal in the same directory:
+Go to [discord.com](https://discord.com/developers/applications)
+1. Create a New Application
+2. Go to the bot tab, Click on add bot
+3. Enable These Settings in Privileged Gateway Intents Category: Presence Intent, Server Members Intent,
+Message Content Intent
+4. Add the bot to your server
+5.  Open `.env` and add your bot token.
+6. Run the following commands in a terminal in the same directory:
 
 ```bash
-pip install -r requirements.txt
-python ./bot.py
+py -m pip install -r requirements.txt
+py ./bot.py
 ```
 
 ## Credits
